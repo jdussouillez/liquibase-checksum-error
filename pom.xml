@@ -1,0 +1,48 @@
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.github.jdussouillez</groupId>
+    <artifactId>liquibase-checksum-error</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-maven-plugin</artifactId>
+                    <version>4.20.0</version>
+                    <!-- <version>4.21.1</version> -->
+                    <configuration>
+                        <changeLogFile>changelog.xml</changeLogFile>
+                        <changeLogDirectory>${project.basedir}/src/main/resources/db/</changeLogDirectory>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/test</url>
+                        <username>postgres</username>
+                        <password>mypassword</password>
+                        <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                        <contexts>default</contexts>
+                    </configuration>
+                    <dependencies>  
+                        <dependency>
+                            <groupId>org.postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
+                            <version>42.6.0</version>
+                        </dependency>
+                    </dependencies>  
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>update</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

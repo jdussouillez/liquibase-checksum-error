@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <changeSet id="init:procedure" author="JR">
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION update_timestamp()
+            RETURNS TRIGGER AS $$
+            BEGIN
+            NEW.updated_at := (NOW() AT TIME ZONE 'utc');
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="init:foobar" author="JR">
+        <sql endDelimiter=";">
+            CREATE SCHEMA IF NOT EXISTS foo;
+        </sql>
+        <createTable schemaName="foo" tableName="bar">
+            <column name="id" type="text">
+                <constraints primaryKeyName="pk_bar" primaryKey="true"/>
+            </column>
+            <column name="updated_at" type="datetime" defaultValueComputed="(NOW() AT TIME ZONE 'utc')">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="text" />
+        </createTable>
+        <sql endDelimiter=";">
+            DROP TRIGGER IF EXISTS update_timestamp_field ON foo.bar;
+            CREATE TRIGGER update_timestamp_field BEFORE UPDATE
+                ON foo.bar FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+        </sql>
+    </changeSet>
+</databaseChangeLog>
